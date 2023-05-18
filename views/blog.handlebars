@@ -1,0 +1,17 @@
+<div class="blog-post">
+  <h2 class="blog-post-title">{{blog.title}}</h2>
+  <p class="blog-post-meta">Posted on: {{formatDate blog.createdAt format="MM/DD/YYYY"}} by {{blog.username}}</p>
+  <p class="blog-post-content">{{blog.content}}</p>
+  {{#each blog.comments}}
+  <div class="comment">
+    <p class="comment-content">{{this.content}}</p>
+    <p class="comment-author">{{this.username}}</p>
+  </div>
+  {{/each}}
+  <form id="new-comment-form">
+    <label for="new-comment">New Comment:</label>
+    <input type="text" id="new-comment" required />
+    <button type="submit">Add Comment</button>
+  </form>
+</div>
+<script src="/public/js/blog.js"></script>

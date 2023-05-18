@@ -1,5 +1,7 @@
 const { Model, DataTypes } = require('sequelize');
-const sequelize = require('../../config/connection');
+const sequelize = require('../config/connection');
+// const User = require('./User');
+// const Comment = require('./Comment')
 
 
 class Blog extends Model {}
@@ -16,9 +18,18 @@ Blog.init(
     },
     user_id: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       references: {
         model: 'user',
         key: 'id',
+      },
+    },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      references: {
+        model: 'user',
+        key: 'username',
       },
     },
   },
@@ -29,5 +40,12 @@ Blog.init(
     modelName: 'blog',
   }
 );
+
+
+
+// Blog.belongsTo(User, {
+//   foreignKey: 'user_id',
+// });
+
 
 module.exports = Blog;

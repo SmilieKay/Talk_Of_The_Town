@@ -1,13 +1,12 @@
 const express = require('express');
 const session = require('express-session');
 const moment = require('moment');
-const Blog = require('./db/models/Blog');
-
-const exphbs = require('express-handlebars').engine;
+const path = require('path');
+const exphbs  = require('express-handlebars');
+require('dotenv').config();
 
 const sequelize = require('./config/connection');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
-const path = require('path');
 
 // Import your individual controllers
 const blogRoutes = require('./controllers/blogController');
@@ -31,37 +30,33 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
-app.set('view engine', 'handlebars');
-
-const handlebars = exphbs.create({
+const hbs = exphbs.create({
+  defaultLayout: 'main',
   helpers: {
     formatDate: function (date, format) {
       return moment(date).format(format);
     },
   },
-  defaultLayout: 'main',
 });
 
-app.engine('handlebars', handlebars.engine);
+app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
 // Use the routes from your imported controllers
-app.use('/api/blog', blogRoutes);
-app.use('/api/users', userRoutes);
+app.use('/blog', blogRoutes); 
+app.use('/users', userRoutes); 
 
-sequelize.sync({ force: false }).then(() => {
-  app.listen(PORT, () => console.log('Now listening'));
-});
- 
 // Homepage route
 app.get('/', async (req, res) => {
+  console.log("hello")
   try {
     // Fetch blog posts from the database
-    const blogPosts = await Blog.findAll();
+    const blogPosts = await sequelize.models.Blog.findAll(); // fetches blogs using sequelize models
 
     // Render the homepage view with the blog posts
     res.render('homepage', { blogs: blogPosts });
+    // res.json(blogPosts);
+
   } catch (err) {
     res.status(500).json(err);
   }
@@ -86,4 +81,8 @@ app.get('/logout', (req, res) => {
     // Redirect to the homepage after logout
     res.redirect('/');
   });
+});
+
+sequelize.sync({ force: false }).then(() => {
+  app.listen(PORT, () => console.log('Now listening'));
 });

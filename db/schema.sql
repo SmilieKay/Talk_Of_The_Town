@@ -1,0 +1,5 @@
+-- DROP DATABASE
+DROP DATABASE IF EXISTS talk_of_the_town;
+
+-- CREATE DATABASE
+CREATE DATABASE talk_of_the_town;
