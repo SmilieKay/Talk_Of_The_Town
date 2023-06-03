@@ -1,3 +1,5 @@
+const { User, Blog, Comment } = require('./models');
+
 const express = require('express');
 const session = require('express-session');
 const moment = require('moment');
@@ -44,23 +46,38 @@ app.set('view engine', 'handlebars');
 
 // Use the routes from your imported controllers
 app.use('/blog', blogRoutes); 
-app.use('/users', userRoutes); 
+app.use('/', userRoutes); 
 
 // Homepage route
 app.get('/', async (req, res) => {
   console.log("hello")
   try {
     // Fetch blog posts from the database
-    const blogPosts = await sequelize.models.Blog.findAll(); // fetches blogs using sequelize models
+    // const blogPosts = await sequelize.models.Blog.findAll(); // fetches blogs using sequelize models
+    const blogPosts = await Blog.findAll();
 
     // Render the homepage view with the blog posts
     res.render('homepage', { blogs: blogPosts });
     // res.json(blogPosts);
 
   } catch (err) {
-    res.status(500).json(err);
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred, please check the server console.' });
   }
 });
+
+// Login route
+app.get('/login', (req, res) => {
+  // Check if the user is logged in
+  if (!req.session.logged_in) {
+    // Render the login view if not logged in
+    res.render('login');
+  } else {
+    // Redirect to the dashboard page if already logged in
+    res.redirect('/dashboard');
+  }
+});
+
 
 // Dashboard route
 app.get('/dashboard', (req, res) => {
