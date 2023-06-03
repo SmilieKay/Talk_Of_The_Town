@@ -33,6 +33,14 @@ router.post('/login', async (req, res) => {
     res.status(400).json(err);
   }
 });
+router.get('/signup', (req, res) => {
+  if (req.session.logged_in) {
+    res.redirect('/dashboard');
+    return;
+  }
+
+  res.render('signup');
+});
 
 router.post('/signup', async (req, res) => {
   try {
